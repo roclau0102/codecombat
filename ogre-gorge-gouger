@@ -1,0 +1,38 @@
+-- You only have 20 seconds until the ogre horde arrives!
+-- Grab as much gold as you can, then retreat to your base and wall it off!
+
+local function collectCoins()
+    local coins = self:findByType("coin", self:findItems())
+    local c = findTheMostValueCoin(coins)
+    if c then
+        self:move(c.pos)
+    end
+end
+
+local function findTheMostValueCoin(coins)
+    local mostValue = 0
+    local bestCoin
+    local index = 1
+    while index <= #coins do
+        local c = coins[index]
+        local value = c.value / self:distanceTo(c)
+        if value > mostValue then
+            mostValue = value
+            bestCoin = c
+        end
+        index = index + 1
+    end
+    return bestCoin
+end
+
+
+while self:now() < 20 do
+    -- Collect coins
+    collectCoins()
+end
+while self.pos.x > 16 do
+    -- Retreat behind the fence
+    self:move({x = 16, y = 37})
+end
+-- Build a fence to keep the ogres out.
+self:buildXY("fence", 21, 37)
