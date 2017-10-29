@@ -1,0 +1,31 @@
+while true do
+    -- 收集金子
+    local i = self:findNearestItem()
+    if i then
+        self:move(i.pos)
+    end
+    -- 如果你有足够的金币，召唤一个士兵。
+    if self.gold >= self:costOf("soldier") then
+        self:summon("soldier")
+    end
+    -- 使用 for 循环来命令每个士兵。
+    local friends = self:findFriends()
+    -- 简单的 for 循环有三个部分： for <counter>=<start>,<end> do
+    -- <counter>中存储了索引数
+    -- 循环会从 <stat>开始循环（这里是1）
+    -- 循环会计数到<end>（#friends是friends数组的长度）
+    --local friendIndex = 1
+    for friendIndex=1,#friends do
+        local friend = friends[friendIndex]
+        if friend.type == "soldier" then
+            local enemy = friend:findNearestEnemy()
+            -- 如果这有一个敌人，命令她攻击。
+            -- 否则的话，移动她到地图的右边。
+            if enemy then
+                self:command(friend, "attack", enemy)
+            else
+                self:command(friend, "move", {x = 86, y = 44})
+            end
+        end
+    end
+end
